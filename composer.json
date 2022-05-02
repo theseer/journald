@@ -1,0 +1,27 @@
+{
+  "name" : "theseer/journalwriter",
+  "description" : "Library to write log entries to Journald",
+  "license" : "BSD-3-Clause",
+  "authors" : [
+    {
+      "name" : "Arne Blankerts",
+      "email" : "arne@blankerts.de",
+      "role" : "Developer"
+    }
+  ],
+  "support" : {
+    "issues" : "https://github.com/theseer/eventgraph/issues"
+  },
+  "require" : {
+    "php" : "^8.1",
+    "ext-sockets": "*",
+    "ext-mbstring": "*"
+  },
+  "autoload": {
+    "classmap": [
+      "src/"
+    ]
+  },
+  "minimum-stability" : "stable",
+  "prefer-stable" : true
+}
