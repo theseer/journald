@@ -1,10 +1,11 @@
-# JournalWriter
+# Journald
 
 A simple Library to write to Systemd's Journald from PHP.
 
 ```php
 use theseer\journald\JournalWriter;
 use theseer\journald\JournalEntry;
+use theseer\journald\SocketPath;
 
 function sample() {
     throw new RuntimeException('Test Exception Message');
