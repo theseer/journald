@@ -7,11 +7,11 @@ spl_autoload_register(
         static $classes = null;
         if ($classes === null) {
             $classes = array(
-                'theseer\\journalwriter\\journalwriter'         => '/JournalWriter.php',
-                'theseer\\journalwriter\\journalentry'          => '/JournalEntry.php',
-                'theseer\\journalwriter\\journalentryexception' => '/JournalEntryException.php',
-                'theseer\\journalwriter\\socketpath'            => '/SocketPath.php',
-                'theseer\\journalwriter\\socketpathexception'   => '/SocketPathException.php'
+                'theseer\\journald\\journalentry' => '/JournalEntry.php',
+                'theseer\\journald\\journalentryexception' => '/JournalEntryException.php',
+                'theseer\\journald\\journalwriter' => '/JournalWriter.php',
+                'theseer\\journald\\socketpath' => '/SocketPath.php',
+                'theseer\\journald\\socketpathexception' => '/SocketPathException.php'
             );
         }
         $cn = strtolower($class);
