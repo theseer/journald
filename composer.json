@@ -14,8 +14,7 @@
   },
   "require" : {
     "php" : "^8.1",
-    "ext-sockets": "*",
-    "ext-mbstring": "*"
+    "ext-sockets": "*"
   },
   "autoload": {
     "classmap": [

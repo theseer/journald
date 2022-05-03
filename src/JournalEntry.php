@@ -58,10 +58,10 @@ final class JournalEntry implements IteratorAggregate {
     }
 
     public function addValue(string $key, string $value) {
-        $caps = \mb_strtoupper($key);
-        if ($caps[0] === '_') {
+        $caps = \strtoupper($key);
+        if (!preg_match('/^[A-Z][A-Z0-9_]{0,63}$/', $caps)) {
             throw new JournalEntryException(
-                'Key must not start with "_".'
+                sprintf('Invalid field name "%s": Journald requires a field name to match "^[A-Z][A-Z0-9_]{,63}$".', $caps)
             );
         }
 
