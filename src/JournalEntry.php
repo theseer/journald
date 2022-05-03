@@ -19,7 +19,7 @@ final class JournalEntry implements IteratorAggregate {
      * @throws JournalEntryException
      */
     private function __construct(array $values) {
-        $this->createId();
+        $this->createMessageId();
 
         foreach($values as $key => $value) {
             $this->addValue($key, $value);
@@ -57,7 +57,10 @@ final class JournalEntry implements IteratorAggregate {
         );
     }
 
-    public function addValue(string $key, string $value) {
+    /**
+     * @throws JournalEntryException
+     */
+    public function addValue(string $key, string $value): void {
         $caps = \strtoupper($key);
         if (!preg_match('/^[A-Z][A-Z0-9_]{0,63}$/', $caps)) {
             throw new JournalEntryException(
@@ -74,12 +77,15 @@ final class JournalEntry implements IteratorAggregate {
         $this->data[$caps] = $value;
     }
 
-    private function createId(): void {
+    /**
+     * @throws JournalEntryException
+     */
+    private function createMessageId(): void {
         try {
             $bytes = random_bytes(16);
             // @codeCoverageIgnoreStart
         } catch (Throwable) {
-            throw new JournalEntryException('Failed to create UUID', previous: $e);
+            throw new JournalEntryException('Failed to create uuid for MESSAGE_ID', previous: $e);
         }
         // @codeCoverageIgnoreEnd
 
