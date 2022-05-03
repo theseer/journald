@@ -8,8 +8,8 @@ spl_autoload_register(
         if ($classes === null) {
             $classes = array(
                 'theseer\\journalwriter\\journalwriter'         => '/JournalWriter.php',
-                'theseer\\journalwriter\\JournalEntry'          => '/JournalEntry.php',
-                'theseer\\journalwriter\\JournalEntryException' => '/JournalEntryException.php',
+                'theseer\\journalwriter\\journalentry'          => '/JournalEntry.php',
+                'theseer\\journalwriter\\journalentryexception' => '/JournalEntryException.php',
                 'theseer\\journalwriter\\socketpath'            => '/SocketPath.php',
                 'theseer\\journalwriter\\socketpathexception'   => '/SocketPathException.php'
             );
