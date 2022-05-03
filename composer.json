@@ -1,5 +1,5 @@
 {
-  "name" : "theseer/journalwriter",
+  "name" : "theseer/journald",
   "description" : "Library to write log entries to Journald",
   "license" : "BSD-3-Clause",
   "authors" : [

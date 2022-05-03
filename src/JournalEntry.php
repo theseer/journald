@@ -1,5 +1,5 @@
 <?php declare(strict_types=1);
-namespace theseer\journalWriter;
+namespace theseer\journald;
 
 use ArrayIterator;
 use IteratorAggregate;
@@ -11,12 +11,12 @@ use function sprintf;
 use function substr;
 use Throwable;
 
-final class LogEntry implements IteratorAggregate {
+final class JournalEntry implements IteratorAggregate {
 
     private array $data = [];
 
     /**
-     * @throws LogEntryException
+     * @throws JournalEntryException
      */
     private function __construct(array $values) {
         $this->createId();
@@ -60,13 +60,13 @@ final class LogEntry implements IteratorAggregate {
     public function addValue(string $key, string $value) {
         $caps = \mb_strtoupper($key);
         if ($caps[0] === '_') {
-            throw new LogEntryException(
+            throw new JournalEntryException(
                 'Key must not start with "_".'
             );
         }
 
         if (isset($this->data[$caps])) {
-            throw new LogEntryException(
+            throw new JournalEntryException(
                 sprintf('Cannot overwrite already set key "%s"', $caps)
             );
         }
@@ -79,7 +79,7 @@ final class LogEntry implements IteratorAggregate {
             $bytes = random_bytes(16);
             // @codeCoverageIgnoreStart
         } catch (Throwable) {
-            throw new LogEntryException('Failed to create UUID', previous: $e);
+            throw new JournalEntryException('Failed to create UUID', previous: $e);
         }
         // @codeCoverageIgnoreEnd
 

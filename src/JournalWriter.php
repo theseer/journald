@@ -1,5 +1,5 @@
 <?php declare(strict_types=1);
-namespace theseer\journalWriter;
+namespace theseer\journald;
 
 final class JournalWriter {
 
@@ -7,7 +7,7 @@ final class JournalWriter {
        private SocketPath $socketPath
     ) {}
 
-    public function write(LogEntry $entry): void {
+    public function write(JournalEntry $entry): void {
         $sock = socket_create(AF_UNIX, SOCK_DGRAM, 0);
         socket_connect($sock, $this->socketPath->asString());
 

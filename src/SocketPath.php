@@ -1,5 +1,5 @@
 <?php declare(strict_types=1);
-namespace theseer\journalWriter;
+namespace theseer\journald;
 
 final class SocketPath {
 
