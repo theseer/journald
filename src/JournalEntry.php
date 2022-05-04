@@ -1,8 +1,15 @@
 <?php declare(strict_types=1);
+/*
+ * This file is part of theseer\journald.
+ *
+ * Copyright (c) Arne Blankerts <arne@blankerts.de> and contributors
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ */
 namespace theseer\journald;
 
-use ArrayIterator;
-use IteratorAggregate;
 use function bin2hex;
 use function debug_backtrace;
 use function hexdec;
@@ -10,31 +17,22 @@ use function random_bytes;
 use function sprintf;
 use function strtoupper;
 use function substr;
+use ArrayIterator;
+use IteratorAggregate;
 use Throwable;
 
 final class JournalEntry implements IteratorAggregate {
-
     private array $data = [];
-
-    /**
-     * @throws JournalEntryException
-     */
-    private function __construct(array $values) {
-        $this->createMessageId();
-
-        foreach($values as $key => $value) {
-            $this->addValue($key, $value);
-        }
-    }
 
     /**
      * @throws JournalEntryException
      */
     public static function fromMessage(string $message): self {
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, limit: 1)[0];
+
         return new self(
             [
-                'MESSAGE' => $message,
+                'MESSAGE'   => $message,
                 'CODE_FILE' => $trace['file'] ?? 'unknown',
                 'CODE_LINE' => (string)$trace['line'],
                 'CODE_FUNC' => sprintf(
@@ -53,13 +51,13 @@ final class JournalEntry implements IteratorAggregate {
     public static function fromThrowable(Throwable $throwable): self {
         return new self(
             [
-                'MESSAGE' => $throwable->getMessage(),
+                'MESSAGE'   => $throwable->getMessage(),
                 'CODE_FILE' => $throwable->getFile(),
                 'CODE_LINE' => (string)$throwable->getLine(),
                 'CODE_FUNC' => $throwable->getTrace()[0]['function'],
-                'ERRNO' => (string)$throwable->getCode(),
-                'CLASS' => $throwable::class,
-                'TRACE' => $throwable->getTraceAsString()
+                'ERRNO'     => (string)$throwable->getCode(),
+                'CLASS'     => $throwable::class,
+                'TRACE'     => $throwable->getTraceAsString()
             ]
         );
     }
@@ -67,8 +65,20 @@ final class JournalEntry implements IteratorAggregate {
     /**
      * @throws JournalEntryException
      */
+    private function __construct(array $values) {
+        $this->createMessageId();
+
+        foreach ($values as $key => $value) {
+            $this->addValue($key, $value);
+        }
+    }
+
+    /**
+     * @throws JournalEntryException
+     */
     public function addValue(string $key, string $value): void {
         $caps = strtoupper($key);
+
         if (!preg_match('/^[A-Z][A-Z0-9_]{0,63}$/', $caps)) {
             throw new JournalEntryException(
                 sprintf('Invalid field name "%s": Journald requires a field name to match "^[A-Z][A-Z0-9_]{,63}$".', $caps)
@@ -82,6 +92,10 @@ final class JournalEntry implements IteratorAggregate {
         }
 
         $this->data[$caps] = $value;
+    }
+
+    public function getIterator(): ArrayIterator {
+        return new ArrayIterator($this->data);
     }
 
     /**
@@ -98,7 +112,7 @@ final class JournalEntry implements IteratorAggregate {
 
         $bytes = bin2hex($bytes);
 
-        $this->data['MESSAGE_ID'] =sprintf(
+        $this->data['MESSAGE_ID'] = sprintf(
             '%08s-%04s-4%03s-%04x-%012s',
             substr($bytes, 0, 8),
             substr($bytes, 8, 4),
@@ -106,9 +120,5 @@ final class JournalEntry implements IteratorAggregate {
             hexdec(substr($bytes, 16, 4)) & 0x3fff | 0x8000,
             substr($bytes, 20, 12)
         );
-    }
-
-    public function getIterator(): ArrayIterator {
-        return new ArrayIterator($this->data);
     }
 }

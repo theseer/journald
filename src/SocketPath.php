@@ -1,14 +1,19 @@
 <?php declare(strict_types=1);
+/*
+ * This file is part of theseer\journald.
+ *
+ * Copyright (c) Arne Blankerts <arne@blankerts.de> and contributors
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ */
 namespace theseer\journald;
 
+use function file_exists;
+
 final class SocketPath {
-
     private string $path;
-
-    private function __construct(string $path) {
-        $this->ensureExists($path);
-        $this->path = $path;
-    }
 
     public static function default(): self {
         return new self('/run/systemd/journal/socket');
@@ -18,16 +23,20 @@ final class SocketPath {
         return new self($path);
     }
 
+    private function __construct(string $path) {
+        $this->ensureExists($path);
+        $this->path = $path;
+    }
+
     public function asString(): string {
         return $this->path;
     }
 
     private function ensureExists(string $path): void {
-        if (!\file_exists($path)) {
+        if (!file_exists($path)) {
             throw new SocketPathException(
                 sprintf('"%s" is not a valid journald socket (not found)', $path)
             );
         }
     }
-
 }
