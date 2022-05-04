@@ -51,8 +51,8 @@ final class JournalEntry implements IteratorAggregate {
      * @throws JournalEntryException
      */
     public static function fromThrowable(Throwable $throwable): self {
-        $trace = $throwable->getTrace()[0] ?? [];
-        $function =  $trace['function'] ?? '';
+        $trace    = $throwable->getTrace()[0] ?? [];
+        $function = $trace['function'] ?? '';
 
         return new self(
             [
@@ -69,6 +69,7 @@ final class JournalEntry implements IteratorAggregate {
 
     /**
      * @param array<string,string> $values
+     *
      * @throws JournalEntryException
      */
     private function __construct(array $values) {

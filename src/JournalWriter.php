@@ -10,7 +10,6 @@
  */
 namespace theseer\journald;
 
-use Socket;
 use function pack;
 use function socket_clear_error;
 use function socket_close;
@@ -22,6 +21,7 @@ use function socket_strerror;
 use function sprintf;
 use function str_contains;
 use function strlen;
+use Socket;
 
 final class JournalWriter {
     public function __construct(
