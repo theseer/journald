@@ -8,6 +8,7 @@ use function debug_backtrace;
 use function hexdec;
 use function random_bytes;
 use function sprintf;
+use function strtoupper;
 use function substr;
 use Throwable;
 
@@ -26,6 +27,9 @@ final class JournalEntry implements IteratorAggregate {
         }
     }
 
+    /**
+     * @throws JournalEntryException
+     */
     public static function fromMessage(string $message): self {
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, limit: 1)[0];
         return new self(
@@ -43,6 +47,9 @@ final class JournalEntry implements IteratorAggregate {
         );
     }
 
+    /**
+     * @throws JournalEntryException
+     */
     public static function fromThrowable(Throwable $throwable): self {
         return new self(
             [
@@ -51,7 +58,7 @@ final class JournalEntry implements IteratorAggregate {
                 'CODE_LINE' => (string)$throwable->getLine(),
                 'CODE_FUNC' => $throwable->getTrace()[0]['function'],
                 'ERRNO' => (string)$throwable->getCode(),
-                'CLASS' => \get_class($throwable),
+                'CLASS' => $throwable::class,
                 'TRACE' => $throwable->getTraceAsString()
             ]
         );
@@ -61,7 +68,7 @@ final class JournalEntry implements IteratorAggregate {
      * @throws JournalEntryException
      */
     public function addValue(string $key, string $value): void {
-        $caps = \strtoupper($key);
+        $caps = strtoupper($key);
         if (!preg_match('/^[A-Z][A-Z0-9_]{0,63}$/', $caps)) {
             throw new JournalEntryException(
                 sprintf('Invalid field name "%s": Journald requires a field name to match "^[A-Z][A-Z0-9_]{,63}$".', $caps)
