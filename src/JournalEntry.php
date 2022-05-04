@@ -51,12 +51,15 @@ final class JournalEntry implements IteratorAggregate {
      * @throws JournalEntryException
      */
     public static function fromThrowable(Throwable $throwable): self {
+        $trace = $throwable->getTrace()[0] ?? [];
+        $function =  $trace['function'] ?? '';
+
         return new self(
             [
                 'MESSAGE'   => $throwable->getMessage(),
                 'CODE_FILE' => $throwable->getFile(),
                 'CODE_LINE' => (string)$throwable->getLine(),
-                'CODE_FUNC' => $throwable->getTrace()[0]['function'],
+                'CODE_FUNC' => $function,
                 'ERRNO'     => (string)$throwable->getCode(),
                 'CLASS'     => $throwable::class,
                 'TRACE'     => $throwable->getTraceAsString()
