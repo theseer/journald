@@ -11,6 +11,7 @@
 namespace theseer\journald;
 
 use function file_exists;
+use function filetype;
 
 final class SocketPath {
     private string $path;
@@ -35,7 +36,12 @@ final class SocketPath {
     private function ensureExists(string $path): void {
         if (!file_exists($path)) {
             throw new SocketPathException(
-                sprintf('"%s" is not a valid journald socket (not found)', $path)
+                sprintf('Invalid Path "%s" - not found', $path)
+            );
+        }
+        if (filetype($path) !== 'socket') {
+            throw new SocketPathException(
+                sprintf('Invalid Path "%s" - not a socket', $path)
             );
         }
     }
