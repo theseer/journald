@@ -10,6 +10,7 @@
  */
 namespace theseer\journald;
 
+use Socket;
 use function pack;
 use function socket_clear_error;
 use function socket_close;
@@ -33,6 +34,8 @@ final class JournalWriter {
      */
     public function write(JournalEntry $entry): void {
         $sock = socket_create(AF_UNIX, SOCK_DGRAM, 0);
+        assert($sock instanceof Socket);
+
         socket_clear_error($sock);
 
         if (!socket_connect($sock, $this->socketPath->asString())) {
@@ -50,6 +53,9 @@ final class JournalWriter {
         $payload = '';
 
         foreach ($entry as $key => $value) {
+            assert(is_string($value));
+            assert(is_string($key));
+
             if (str_contains($value, "\n")) {
                 $payload .= sprintf(
                     "%s\n%s%s\n",

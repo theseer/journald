@@ -22,6 +22,8 @@ use IteratorAggregate;
 use Throwable;
 
 final class JournalEntry implements IteratorAggregate {
+
+    /** @var array<string,string> */
     private array $data = [];
 
     /**
@@ -34,11 +36,11 @@ final class JournalEntry implements IteratorAggregate {
             [
                 'MESSAGE'   => $message,
                 'CODE_FILE' => $trace['file'] ?? 'unknown',
-                'CODE_LINE' => (string)$trace['line'],
+                'CODE_LINE' => (string)($trace['line'] ?? 0),
                 'CODE_FUNC' => sprintf(
                     '%s%s%s',
-                    $trace['class'],
-                    $trace['type'],
+                    $trace['class'] ?? '',
+                    $trace['type'] ?? '',
                     $trace['function']
                 )
             ]
@@ -63,6 +65,7 @@ final class JournalEntry implements IteratorAggregate {
     }
 
     /**
+     * @param array<string,string> $values
      * @throws JournalEntryException
      */
     private function __construct(array $values) {
@@ -105,7 +108,7 @@ final class JournalEntry implements IteratorAggregate {
         try {
             $bytes = random_bytes(16);
             // @codeCoverageIgnoreStart
-        } catch (Throwable) {
+        } catch (Throwable $e) {
             throw new JournalEntryException('Failed to create uuid for MESSAGE_ID', previous: $e);
         }
         // @codeCoverageIgnoreEnd
