@@ -3,4 +3,5 @@
   <phar name="phpab" version="^1.27.1" installed="1.27.1" location="./tools/phpab" copy="false"/>
   <phar name="php-cs-fixer" version="^3.8.0" installed="3.8.0" location="./tools/php-cs-fixer" copy="false"/>
   <phar name="phpstan" version="^1.4.10" installed="1.6.4" location="./tools/phpstan" copy="false"/>
+  <phar name="psalm" version="^4.22.0" installed="4.23.0" location="./tools/psalm" copy="false"/>
 </phive>
