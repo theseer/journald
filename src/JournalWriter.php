@@ -50,31 +50,12 @@ final class JournalWriter {
             );
         }
 
-        $payload = '';
+        $payload = $entry->asString();
+        $length = strlen($payload);
 
-        foreach ($entry as $key => $value) {
-            assert(is_string($value));
-            assert(is_string($key));
+        $res = socket_send($sock, $payload, $length, 0);
 
-            if (str_contains($value, "\n")) {
-                $payload .= sprintf(
-                    "%s\n%s%s\n",
-                    $key,
-                    pack('P', strlen($value)),
-                    $value
-                );
-
-                continue;
-            }
-
-            $payload .= sprintf("%s=%s\n", $key, $value);
-        }
-
-        $len = strlen($payload);
-
-        $res = socket_send($sock, $payload, $len, 0);
-
-        if ($res === false || $res !== $len) {
+        if ($res === false || $res !== $length) {
             $error = socket_last_error($sock);
 
             if ($error !== 0) {
@@ -84,7 +65,7 @@ final class JournalWriter {
                         socket_strerror($error),
                         $error,
                         (int)$res,
-                        $len
+                        $length
                     )
                 );
             }
@@ -93,7 +74,7 @@ final class JournalWriter {
                 sprintf(
                     'Failed to write to journald socket - no error code available (%d of %d bytes written',
                     (int)$res,
-                    $len
+                    $length
                 )
             );
         }

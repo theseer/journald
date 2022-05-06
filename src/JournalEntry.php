@@ -101,6 +101,30 @@ final class JournalEntry implements IteratorAggregate {
         $this->data[$caps] = $value;
     }
 
+    public function asString(): string {
+        $payload = '';
+
+        foreach ($this->data as $key => $value) {
+            assert(is_string($value));
+            assert(is_string($key));
+
+            if (str_contains($value, "\n")) {
+                $payload .= sprintf(
+                    "%s\n%s%s\n",
+                    $key,
+                    pack('P', strlen($value)),
+                    $value
+                );
+
+                continue;
+            }
+
+            $payload .= sprintf("%s=%s\n", $key, $value);
+        }
+
+        return $payload;
+    }
+
     public function getIterator(): ArrayIterator {
         return new ArrayIterator($this->data);
     }

@@ -62,6 +62,36 @@ class JournalEntryTest extends TestCase {
         $entry->addValue('MESSAGE', 'value');
     }
 
+    public function testSimpleValuesCanBeSerializedToJournaldFormatedString(): void {
+        $expected = implode("\n",[
+            "MESSAGE_ID=%s",
+            "MESSAGE=test",
+            "CODE_FILE=" . __FILE__,
+            "CODE_LINE=" . (__LINE__ + 4),
+            "CODE_FUNC=theseer\journald\JournalEntry::fromMessage",
+            ""
+        ]);
+        $entry = JournalEntry::fromMessage('test');
+
+        $this->assertStringMatchesFormat($expected, $entry->asString());
+    }
+
+    public function testValuesWithLinebreaksCanBeSerializedToJournaldFormatedString(): void {
+        $message = "line1\nline2";
+        $expected = implode("\n",[
+            "MESSAGE_ID=%s",
+            "MESSAGE",
+            pack('P', strlen($message)) . "line1",
+            "line2",
+            "CODE_FILE=" . __FILE__,
+            "CODE_LINE=" . (__LINE__ + 4),
+            "CODE_FUNC=theseer\journald\JournalEntry::fromMessage",
+            ""
+        ]);
+        $entry = JournalEntry::fromMessage($message);
+
+        $this->assertStringMatchesFormat($expected, $entry->asString());
+    }
 
     private function entryAsArray(JournalEntry $entry): array {
         $entryAsArray = [];
