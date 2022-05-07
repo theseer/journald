@@ -10,7 +10,8 @@
  */
 namespace theseer\journald;
 
-use function pack;
+use Socket;
+use function is_int;
 use function socket_clear_error;
 use function socket_close;
 use function socket_connect;
@@ -19,9 +20,7 @@ use function socket_last_error;
 use function socket_send;
 use function socket_strerror;
 use function sprintf;
-use function str_contains;
 use function strlen;
-use Socket;
 
 final class JournalWriter {
     public function __construct(
@@ -33,12 +32,23 @@ final class JournalWriter {
      * @throws JournalWriterException
      */
     public function write(JournalEntry $entry): void {
+        $sock = $this->setupSocketConnection();
+
+        $this->writeToSocket($entry, $sock);
+
+        $this->closeConnection($sock);
+    }
+
+    /**
+     * @throws JournalWriterException
+     */
+    private function setupSocketConnection() {
         $sock = socket_create(AF_UNIX, SOCK_DGRAM, 0);
         assert($sock instanceof Socket);
 
         socket_clear_error($sock);
 
-        if (!socket_connect($sock, $this->socketPath->asString())) {
+        if (!@socket_connect($sock, $this->socketPath->asString())) {
             $error = socket_last_error($sock);
 
             throw new JournalWriterException(
@@ -49,7 +59,13 @@ final class JournalWriter {
                 )
             );
         }
+        return $sock;
+    }
 
+    /**
+     * @throws JournalWriterException
+     */
+    private function writeToSocket(JournalEntry $entry, Socket $sock): void {
         $payload = $entry->asString();
         $length = strlen($payload);
 
@@ -57,28 +73,23 @@ final class JournalWriter {
 
         if ($res === false || $res !== $length) {
             $error = socket_last_error($sock);
-
-            if ($error !== 0) {
-                throw new JournalWriterException(
-                    sprintf(
-                        'Failed to write log entry: %s (error %d - wrote %d of %d bytes)',
-                        socket_strerror($error),
-                        $error,
-                        (int)$res,
-                        $length
-                    )
-                );
-            }
+            assert(is_int($error));
+            socket_close($sock);
 
             throw new JournalWriterException(
                 sprintf(
-                    'Failed to write to journald socket - no error code available (%d of %d bytes written',
+                    'Failed to write log entry: %s (error %d - wrote %d of %d bytes)',
+                    socket_strerror($error),
+                    $error,
                     (int)$res,
                     $length
                 )
             );
         }
+    }
 
+    private function closeConnection(Socket $sock): void {
+        socket_shutdown($sock, 2);
         socket_close($sock);
     }
 }
