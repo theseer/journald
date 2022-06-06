@@ -105,9 +105,6 @@ final class JournalEntry implements IteratorAggregate {
         $payload = '';
 
         foreach ($this->data as $key => $value) {
-            assert(is_string($value));
-            assert(is_string($key));
-
             if (str_contains($value, "\n")) {
                 $payload .= sprintf(
                     "%s\n%s%s\n",

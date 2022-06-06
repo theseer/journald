@@ -11,7 +11,6 @@
 namespace theseer\journald;
 
 use Socket;
-use function is_int;
 use function socket_clear_error;
 use function socket_close;
 use function socket_connect;
@@ -73,7 +72,6 @@ final class JournalWriter {
 
         if ($res === false || $res !== $length) {
             $error = socket_last_error($sock);
-            assert(is_int($error));
             socket_close($sock);
 
             throw new JournalWriterException(
