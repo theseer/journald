@@ -3,3 +3,4 @@ tools
 .php-cs-fixer.cache
 build/coverage
 *.cache
+.phive/auth.xml
