@@ -69,7 +69,7 @@ final class JournalWriter {
         $payload = $entry->asString();
         $length = strlen($payload);
 
-        $res = socket_send($sock, $payload, $length, 0);
+        $res = @socket_send($sock, $payload, $length, 0);
 
         if ($res === false || $res !== $length) {
             $error = socket_last_error($sock);
