@@ -10,7 +10,7 @@
     }
   ],
   "support" : {
-    "issues" : "https://github.com/theseer/eventgraph/issues"
+    "issues" : "https://github.com/theseer/journald/issues"
   },
   "require" : {
     "php" : "^8.1",
