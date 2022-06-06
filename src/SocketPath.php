@@ -39,6 +39,7 @@ final class SocketPath {
                 sprintf('Invalid Path "%s" - not found', $path)
             );
         }
+
         if (filetype($path) !== 'socket') {
             throw new SocketPathException(
                 sprintf('Invalid Path "%s" - not a socket', $path)

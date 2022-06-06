@@ -58,6 +58,7 @@ final class JournalWriter {
                 )
             );
         }
+
         return $sock;
     }
 
@@ -66,7 +67,7 @@ final class JournalWriter {
      */
     private function writeToSocket(JournalEntry $entry, Socket $sock): void {
         $payload = $entry->asString();
-        $length = strlen($payload);
+        $length  = strlen($payload);
 
         $res = @socket_send($sock, $payload, $length, 0);
 
