@@ -44,4 +44,22 @@ class JournalWriterTest extends TestCase {
         $this->expectException(JournalWriterException::class);
         $writer->write(JournalEntry::fromMessage('test'));
     }
+
+
+    public function testThrowsExceptionWhenSocketDidNotAcceptAllInput(): void {
+        $socketPath = '/tmp/journald-writer-test' . \uniqid('-socket', true);
+        $listenSock = socket_create(AF_UNIX, SOCK_DGRAM, 0);
+        socket_bind( $listenSock, $socketPath);
+
+        $writer = new JournalWriter(SocketPath::custom($socketPath));
+
+
+        $this->expectException(JournalWriterException::class);
+        $writer->write(JournalEntry::fromMessage(\file_get_contents('/dev/urandom', length: 1024*1024)));
+
+        socket_close($listenSock);
+        unlink($socketPath);
+
+    }
+
 }
