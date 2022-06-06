@@ -10,7 +10,6 @@
  */
 namespace theseer\journald;
 
-use Socket;
 use function socket_clear_error;
 use function socket_close;
 use function socket_connect;
@@ -20,6 +19,7 @@ use function socket_send;
 use function socket_strerror;
 use function sprintf;
 use function strlen;
+use Socket;
 
 final class JournalWriter {
     public function __construct(
@@ -41,7 +41,7 @@ final class JournalWriter {
     /**
      * @throws JournalWriterException
      */
-    private function setupSocketConnection() {
+    private function setupSocketConnection(): Socket {
         $sock = socket_create(AF_UNIX, SOCK_DGRAM, 0);
         assert($sock instanceof Socket);
 
