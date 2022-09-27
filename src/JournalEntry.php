@@ -141,6 +141,9 @@ final class JournalEntry implements IteratorAggregate {
         try {
             $bytes = random_bytes(16);
             // @codeCoverageIgnoreStart
+            if(strlen($bytes) !== 16) {
+                throw new JournalEntryException('Unexpected amount of random bytes');
+            }
         } catch (Throwable $e) {
             throw new JournalEntryException('Failed to create uuid for MESSAGE_ID', previous: $e);
         }

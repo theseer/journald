@@ -15,6 +15,7 @@ class JournalEntryTest extends TestCase {
     public function testIsProperlyConstructedFromMessage(): void {
         $msg = uniqid('test', true);
 
+        $line = __LINE__ + 1;
         $entry = JournalEntry::fromMessage($msg);
 
         $entryAsArray = $this->entryAsArray($entry);
@@ -25,6 +26,17 @@ class JournalEntryTest extends TestCase {
         );
 
         $this->assertSame($msg, $entryAsArray['MESSAGE']);
+        $this->assertSame( (string)$line, $entryAsArray['CODE_LINE']);
+    }
+
+    public function testGeneratedMessageIdHasUUIDFormat(): void {
+        $msg = uniqid('test', true);
+        $entry = JournalEntry::fromMessage($msg);
+
+        $this->assertMatchesRegularExpression(
+            '/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/',
+            $this->entryAsArray($entry)['MESSAGE_ID']
+        );
     }
 
     public function testCanBeCreatedWithTraceOffset(): void {
@@ -70,6 +82,13 @@ class JournalEntryTest extends TestCase {
         $this->assertSame( (string)$line, $entryAsArray['CODE_LINE']);
         $this->assertSame( (string)$errNo, $entryAsArray['ERRNO']);
         $this->assertSame( __CLASS__ . '->' . __FUNCTION__, $entryAsArray['CODE_FUNC']);
+    }
+
+    public function testAddingValueWithLowerCaseKeyGetsKeyUpperCased(): void {
+        $entry = JournalEntry::fromMessage('test');
+        $entry->addValue('lower', 'value');
+
+        $this->assertSame('value', $this->entryAsArray($entry)['LOWER']);
     }
 
     /**
