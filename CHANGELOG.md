@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to Templado are documented in this file using the [Keep a CHANGELOG](http://keepachangelog.com/) principles.
+All notable changes to Journald are documented in this file using the [Keep a CHANGELOG](http://keepachangelog.com/) principles.
 
 
 ## [1.1.0] - 2022-09-27
