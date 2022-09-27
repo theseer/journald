@@ -13,7 +13,6 @@ use function uniqid;
 class JournalEntryTest extends TestCase {
 
     public function testIsProperlyConstructedFromMessage(): void {
-
         $msg = uniqid('test', true);
 
         $entry = JournalEntry::fromMessage($msg);
@@ -28,11 +27,36 @@ class JournalEntryTest extends TestCase {
         $this->assertSame($msg, $entryAsArray['MESSAGE']);
     }
 
+    public function testCanBeCreatedWithTraceOffset(): void {
+        $msg = uniqid('test', true);
+
+        $wrapper = function($msg) {
+            return JournalEntry::fromMessage($msg, 1);
+        };
+
+        $line = __LINE__ + 1;
+        $entry = $wrapper($msg);
+
+        $entryAsArray = $this->entryAsArray($entry);
+
+        $this->assertSame(
+            ['MESSAGE_ID', 'MESSAGE', 'CODE_FILE', 'CODE_LINE', 'CODE_FUNC'],
+            array_keys($entryAsArray)
+        );
+
+        $this->assertSame($msg, $entryAsArray['MESSAGE']);
+        $this->assertSame( (string)$line, $entryAsArray['CODE_LINE']);
+        $this->assertSame(__CLASS__ .'->' . __FUNCTION__, $entryAsArray['CODE_FUNC']);
+        $this->assertSame(__FILE__, $entryAsArray['CODE_FILE']);
+    }
+
     public function testCanBeCreatedFromThrowable(): void {
         $msg = uniqid('test', true);
 
+        $errNo = 123;
+        $line = __LINE__ + 2;
         $entry = JournalEntry::fromThrowable(
-            new RuntimeException($msg)
+            new RuntimeException($msg, $errNo)
         );
 
         $entryAsArray = $this->entryAsArray($entry);
@@ -43,6 +67,9 @@ class JournalEntryTest extends TestCase {
         );
 
         $this->assertSame($msg, $entryAsArray['MESSAGE']);
+        $this->assertSame( (string)$line, $entryAsArray['CODE_LINE']);
+        $this->assertSame( (string)$errNo, $entryAsArray['ERRNO']);
+        $this->assertSame( __CLASS__ . '->' . __FUNCTION__, $entryAsArray['CODE_FUNC']);
     }
 
     /**
@@ -68,7 +95,7 @@ class JournalEntryTest extends TestCase {
             "MESSAGE=test",
             "CODE_FILE=" . __FILE__,
             "CODE_LINE=" . (__LINE__ + 4),
-            "CODE_FUNC=theseer\journald\JournalEntry::fromMessage",
+            "CODE_FUNC=theseer\journald\JournalEntryTest->testSimpleValuesCanBeSerializedToJournaldFormatedString",
             ""
         ]);
         $entry = JournalEntry::fromMessage('test');
@@ -76,7 +103,7 @@ class JournalEntryTest extends TestCase {
         $this->assertStringMatchesFormat($expected, $entry->asString());
     }
 
-    public function testValuesWithLinebreaksCanBeSerializedToJournaldFormatedString(): void {
+    public function testValuesWithLinebreaksCanBeSerializedToJournaldFormattedString(): void {
         $message = "line1\nline2";
         $expected = implode("\n",[
             "MESSAGE_ID=%s",
@@ -85,7 +112,7 @@ class JournalEntryTest extends TestCase {
             "line2",
             "CODE_FILE=" . __FILE__,
             "CODE_LINE=" . (__LINE__ + 4),
-            "CODE_FUNC=theseer\journald\JournalEntry::fromMessage",
+            "CODE_FUNC=theseer\journald\JournalEntryTest->testValuesWithLinebreaksCanBeSerializedToJournaldFormattedString",
             ""
         ]);
         $entry = JournalEntry::fromMessage($message);

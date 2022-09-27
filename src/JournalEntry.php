@@ -10,6 +10,7 @@
  */
 namespace theseer\journald;
 
+use function array_slice;
 use function bin2hex;
 use function debug_backtrace;
 use function hexdec;
@@ -22,26 +23,28 @@ use IteratorAggregate;
 use Throwable;
 
 final class JournalEntry implements IteratorAggregate {
-
     /** @var array<string,string> */
     private array $data = [];
 
     /**
      * @throws JournalEntryException
      */
-    public static function fromMessage(string $message): self {
-        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, limit: 1)[0];
+    public static function fromMessage(string $message, int $traceOffset = 0): self {
+        $trace = array_slice(
+            debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, limit: $traceOffset + 2),
+            $traceOffset
+        );
 
         return new self(
             [
                 'MESSAGE'   => $message,
-                'CODE_FILE' => $trace['file'] ?? 'unknown',
-                'CODE_LINE' => (string)($trace['line'] ?? 0),
+                'CODE_FILE' => $trace[0]['file'] ?? 'unknown',
+                'CODE_LINE' => (string)($trace[0]['line'] ?? 0),
                 'CODE_FUNC' => sprintf(
                     '%s%s%s',
-                    $trace['class'] ?? '',
-                    $trace['type'] ?? '',
-                    $trace['function']
+                    $trace[1]['class'] ?? '',
+                    $trace[1]['type'] ?? '',
+                    $trace[1]['function']
                 )
             ]
         );
@@ -52,7 +55,12 @@ final class JournalEntry implements IteratorAggregate {
      */
     public static function fromThrowable(Throwable $throwable): self {
         $trace    = $throwable->getTrace()[0] ?? [];
-        $function = $trace['function'] ?? '';
+        $function = sprintf(
+            '%s%s%s',
+            $trace['class'] ?? '',
+            $trace['type'] ?? '',
+            $trace['function']
+        );
 
         return new self(
             [
