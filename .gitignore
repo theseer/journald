@@ -2,5 +2,6 @@ vendor
 tools
 .php-cs-fixer.cache
 build/coverage
+build/infection.html
 *.cache
 .phive/auth.xml
