@@ -44,7 +44,7 @@ final class JournalEntry implements IteratorAggregate {
                     '%s%s%s',
                     $trace[1]['class'] ?? '',
                     $trace[1]['type'] ?? '',
-                    $trace[1]['function']
+                    $trace[1]['function'] ?? '{unknown}'
                 )
             ]
         );
@@ -59,7 +59,7 @@ final class JournalEntry implements IteratorAggregate {
             '%s%s%s',
             $trace['class'] ?? '',
             $trace['type'] ?? '',
-            $trace['function']
+            $trace['function'] ?? '{unknown}'
         );
 
         return new self(
