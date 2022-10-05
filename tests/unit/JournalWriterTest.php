@@ -53,12 +53,13 @@ class JournalWriterTest extends TestCase {
 
         $writer = new JournalWriter(SocketPath::custom($socketPath));
 
-
-        $this->expectException(JournalWriterException::class);
-
-        socket_close($listenSock);
-        unlink($socketPath);
+        try {
+            $this->expectException(JournalWriterException::class);
             $writer->write(JournalEntry::fromMessage(\random_bytes(length: 1024*1024)));
+        } finally {
+            socket_close($listenSock);
+            unlink($socketPath);
+        }
 
     }
 
