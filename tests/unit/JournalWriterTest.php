@@ -55,10 +55,10 @@ class JournalWriterTest extends TestCase {
 
 
         $this->expectException(JournalWriterException::class);
-        $writer->write(JournalEntry::fromMessage(\file_get_contents('/dev/urandom', length: 1024*1024)));
 
         socket_close($listenSock);
         unlink($socketPath);
+            $writer->write(JournalEntry::fromMessage(\random_bytes(length: 1024*1024)));
 
     }
 
