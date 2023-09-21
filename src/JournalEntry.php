@@ -141,23 +141,15 @@ final class JournalEntry implements IteratorAggregate {
         try {
             $bytes = random_bytes(16);
             // @codeCoverageIgnoreStart
-            if(strlen($bytes) !== 16) {
-                throw new JournalEntryException('Unexpected amount of random bytes');
-            }
         } catch (Throwable $e) {
             throw new JournalEntryException('Failed to create uuid for MESSAGE_ID', previous: $e);
         }
         // @codeCoverageIgnoreEnd
 
+        $bytes[6] = ($bytes[6] & "\x0F") | "\x40";
+        $bytes[8] = ($bytes[8] & "\x3F") | "\x80";
         $bytes = bin2hex($bytes);
 
-        $this->data['MESSAGE_ID'] = sprintf(
-            '%08s-%04s-4%03s-%04x-%012s',
-            substr($bytes, 0, 8),
-            substr($bytes, 8, 4),
-            substr($bytes, 13, 3),
-            hexdec(substr($bytes, 16, 4)) & 0x3fff | 0x8000,
-            substr($bytes, 20, 12)
-        );
+        $this->data['MESSAGE_ID'] = \preg_replace('/^(.{8})(.{4})(.{4})(.{4})(.{12})$/', "\\1-\\2-\\3-\\4-\\5", $bytes);
     }
 }
