@@ -22,6 +22,7 @@ use ArrayIterator;
 use IteratorAggregate;
 use Throwable;
 
+/** @template-implements IteratorAggregate<string, string> */
 final class JournalEntry implements IteratorAggregate {
     /** @var array<string,string> */
     private array $data = [];
