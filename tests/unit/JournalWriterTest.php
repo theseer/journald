@@ -1,16 +1,16 @@
 <?php declare(strict_types=1);
 namespace theseer\journald;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use function socket_close;
 use function socket_create;
 use function unlink;
 
-/**
- * @covers \theseer\journald\JournalWriter
- * @uses \theseer\journald\JournalEntry
- * @uses \theseer\journald\SocketPath
- */
+#[CoversClass(JournalWriter::class)]
+#[UsesClass(JournalEntry::class)]
+#[UsesClass(SocketPath::class)]
 class JournalWriterTest extends TestCase {
 
     public function testWritesToSocket(): void {

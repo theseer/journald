@@ -1,11 +1,10 @@
 <?php declare(strict_types=1);
 namespace theseer\journald;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \theseer\journald\SocketPath
- */
+#[CoversClass(SocketPath::class)]
 class SocketPathTest extends TestCase {
 
     public function testCanBeCreatedWithDefaultPath(): void {

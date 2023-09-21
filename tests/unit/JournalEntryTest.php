@@ -1,15 +1,15 @@
 <?php declare(strict_types=1);
 namespace theseer\journald;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use function array_keys;
 use function str_repeat;
 use function uniqid;
 
-/**
- * @covers \theseer\journald\JournalEntry
- */
+#[CoversClass(JournalEntry::class)]
 class JournalEntryTest extends TestCase {
 
     public function testIsProperlyConstructedFromMessage(): void {
@@ -91,9 +91,7 @@ class JournalEntryTest extends TestCase {
         $this->assertSame('value', $this->entryAsArray($entry)['LOWER']);
     }
 
-    /**
-     * @dataProvider invalidFieldnameProvider
-     */
+    #[DataProvider('invalidFieldnameProvider')]
     public function testAddingValueWithInvalidFieldNameThrowsException(string $fieldname): void {
         $entry = JournalEntry::fromMessage('test');
 
@@ -147,7 +145,7 @@ class JournalEntryTest extends TestCase {
         return $entryAsArray;
     }
 
-    public function invalidFieldnameProvider(): array {
+    public static function invalidFieldnameProvider(): array {
         return [
             'too-long' => [str_repeat('X', 65)],
             'start-with-underscore' => ['_FOO'],
