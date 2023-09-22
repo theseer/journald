@@ -10,7 +10,7 @@
  */
 namespace theseer\journald;
 
-use function socket_clear_error;
+use function getprotobyname;
 use function socket_close;
 use function socket_connect;
 use function socket_create;
@@ -44,8 +44,6 @@ final class JournalWriter {
     private function setupSocketConnection(): Socket {
         $sock = socket_create(AF_UNIX, SOCK_DGRAM, getprotobyname('ip'));
         assert($sock instanceof Socket);
-
-        socket_clear_error($sock);
 
         if (!@socket_connect($sock, $this->socketPath->asString())) {
             $error = socket_last_error($sock);
