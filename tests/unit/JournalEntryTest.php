@@ -29,12 +29,12 @@ class JournalEntryTest extends TestCase {
         $this->assertSame( (string)$line, $entryAsArray['CODE_LINE']);
     }
 
-    public function testGeneratedMessageIdHasUUIDFormat(): void {
+    public function testGeneratedMessageIdHasUUIDv4Format(): void {
         $msg = uniqid('test', true);
         $entry = JournalEntry::fromMessage($msg);
 
         $this->assertMatchesRegularExpression(
-            '/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/',
+            '/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/',
             $this->entryAsArray($entry)['MESSAGE_ID']
         );
     }
