@@ -34,6 +34,7 @@ final class JournalEntry implements IteratorAggregate {
             debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, limit: $traceOffset + 2),
             $traceOffset
         );
+
         if (count($trace) !== 2) {
             throw new JournalEntryException(
                 sprintf('Failed to capture trace context with offset %d', $traceOffset)
