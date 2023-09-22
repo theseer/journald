@@ -42,7 +42,7 @@ final class JournalWriter {
      * @throws JournalWriterException
      */
     private function setupSocketConnection(): Socket {
-        $sock = socket_create(AF_UNIX, SOCK_DGRAM, 0);
+        $sock = socket_create(AF_UNIX, SOCK_DGRAM, getprotobyname('ip'));
         assert($sock instanceof Socket);
 
         socket_clear_error($sock);
