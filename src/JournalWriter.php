@@ -86,7 +86,7 @@ final class JournalWriter {
     }
 
     private function closeConnection(Socket $sock): void {
-        socket_shutdown($sock, 2);
+        socket_shutdown($sock);
         socket_close($sock);
     }
 }
