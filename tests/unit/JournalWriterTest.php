@@ -2,6 +2,7 @@
 namespace theseer\journald;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Small;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use function socket_close;
@@ -11,6 +12,7 @@ use function unlink;
 #[CoversClass(JournalWriter::class)]
 #[UsesClass(JournalEntry::class)]
 #[UsesClass(SocketPath::class)]
+#[Small]
 class JournalWriterTest extends TestCase {
 
     public function testWritesToSocket(): void {

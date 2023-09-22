@@ -3,9 +3,11 @@
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.3/phpunit.xsd"
          backupGlobals="false"
          bootstrap="vendor/autoload.php"
+         beStrictAboutOutputDuringTests="true"
+         beStrictAboutTestsThatDoNotTestAnything="true"
+         enforceTimeLimit="true"
          cacheDirectory=".phpunit.cache"
-         backupStaticProperties="false"
-         requireCoverageMetadata="true">
+         beStrictAboutCoverageMetadata="true">
     <coverage includeUncoveredFiles="true">
         <report>
             <html outputDirectory="build/coverage/html" lowUpperBound="35" highLowerBound="70"/>
