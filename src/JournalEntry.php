@@ -13,11 +13,10 @@ namespace theseer\journald;
 use function array_slice;
 use function bin2hex;
 use function debug_backtrace;
-use function hexdec;
+use function preg_replace;
 use function random_bytes;
 use function sprintf;
 use function strtoupper;
-use function substr;
 use ArrayIterator;
 use IteratorAggregate;
 use Throwable;
@@ -149,8 +148,8 @@ final class JournalEntry implements IteratorAggregate {
 
         $bytes[6] = ($bytes[6] & "\x0F") | "\x40";
         $bytes[8] = ($bytes[8] & "\x3F") | "\x80";
-        $bytes = bin2hex($bytes);
+        $bytes    = bin2hex($bytes);
 
-        $this->data['MESSAGE_ID'] = \preg_replace('/^(.{8})(.{4})(.{4})(.{4})(.{12})$/', "\\1-\\2-\\3-\\4-\\5", $bytes);
+        $this->data['MESSAGE_ID'] = preg_replace('/^(.{8})(.{4})(.{4})(.{4})(.{12})$/', '\\1-\\2-\\3-\\4-\\5', $bytes);
     }
 }
