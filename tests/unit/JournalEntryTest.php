@@ -29,6 +29,12 @@ class JournalEntryTest extends TestCase {
         $this->assertSame( (string)$line, $entryAsArray['CODE_LINE']);
     }
 
+    public function testUsingInvalidTraceOffsetThrowsException(): void {
+        $this->expectException(JournalEntryException::class);
+
+        $entry = JournalEntry::fromMessage('fooo', -10);
+    }
+
     public function testGeneratedMessageIdHasUUIDv4Format(): void {
         $msg = uniqid('test', true);
         $entry = JournalEntry::fromMessage($msg);
