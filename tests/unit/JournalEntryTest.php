@@ -32,7 +32,13 @@ class JournalEntryTest extends TestCase {
     public function testUsingInvalidTraceOffsetThrowsException(): void {
         $this->expectException(JournalEntryException::class);
 
-        $entry = JournalEntry::fromMessage('fooo', -10);
+        JournalEntry::fromMessage('fooo', -10);
+    }
+
+    public function testUsingTraceOffsetThatLeadsToEmptyTraceThrowsException(): void {
+        $this->expectException(JournalEntryException::class);
+
+        JournalEntry::fromMessage('fooo', 100);
     }
 
     public function testGeneratedMessageIdHasUUIDv4Format(): void {

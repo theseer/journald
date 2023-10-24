@@ -30,12 +30,18 @@ final class JournalEntry implements IteratorAggregate {
      * @throws JournalEntryException
      */
     public static function fromMessage(string $message, int $traceOffset = 0): self {
+        if ($traceOffset < 0) {
+            throw new JournalEntryException(
+                sprintf('Trace offset cannot be negative (%d given)', $traceOffset)
+            );
+        }
+
         $trace = array_slice(
             debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, limit: $traceOffset + 2),
             $traceOffset
         );
 
-        if (count($trace) !== 2) {
+        if (count($trace) === 0) {
             throw new JournalEntryException(
                 sprintf('Failed to capture trace context with offset %d', $traceOffset)
             );
